@@ -1,0 +1,48 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: order
+  namespace: bsc-test
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: order
+  template:
+    metadata:
+      labels:
+        app: order
+    spec:
+      containers:
+      - image: asia-docker.pkg.dev/bombcrypto/api-test/order-service
+        name: order
+        ports:
+        - containerPort: 8080
+        resources:
+          requests:
+            cpu: 10m
+            ephemeral-storage: 30Mi
+            memory: 100Mi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: order
+  namespace: bsc-test
+  annotations:
+    cloud.google.com/neg: '
+      {
+        "exposed_ports": {
+          "80": {}
+        }
+      }
+    '
+spec:
+  ports:
+  - name: http
+    port: 80
+    protocol: TCP
+    targetPort: 8080
+  selector:
+    app: order
+  type: ClusterIP

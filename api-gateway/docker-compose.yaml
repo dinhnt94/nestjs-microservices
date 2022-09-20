@@ -1,0 +1,16 @@
+version: '2'
+services:
+  web:
+    build: .
+    command: npm run start:dev
+    volumes:
+      - .:/usr/app/
+      - /usr/app/node_modules
+    ports:
+      - "3000:3000"
+    networks:
+      - order_default
+
+networks:
+  order_default:
+    external: true

@@ -1,0 +1,10 @@
+steps:
+- name: gcr.io/cloud-builders/docker
+  args:
+  - build
+  - -t=asia-docker.pkg.dev/$PROJECT_ID/api-test/gateway
+  - .
+images:
+- asia-docker.pkg.dev/$PROJECT_ID/api-test/gateway
+options:
+  logging: CLOUD_LOGGING_ONLY

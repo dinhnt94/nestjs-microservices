@@ -1,0 +1,48 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: gateway
+  namespace: bsc-test
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: gateway
+  template:
+    metadata:
+      labels:
+        app: gateway
+    spec:
+      containers:
+      - image: asia-docker.pkg.dev/bombcrypto/api-test/gateway
+        name: gateway
+        ports:
+        - containerPort: 8080
+        resources:
+          requests:
+            cpu: 10m
+            ephemeral-storage: 30Mi
+            memory: 100Mi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: gateway
+  namespace: bsc-test
+  annotations:
+    cloud.google.com/neg: '
+      {
+        "exposed_ports": {
+          "80": {}
+        }
+      }
+    '
+spec:
+  ports:
+  - name: http
+    port: 80
+    protocol: TCP
+    targetPort: 8080
+  selector:
+    app: gateway
+  type: LoadBalancer
